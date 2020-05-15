@@ -4,6 +4,7 @@ class UserModel {
   String lastName;
   String avatar;
 
+
   UserModel.fromJson(Map<String, dynamic> json){ // constructor para crear objeto recibiendo como parámetro un json
     var jsonData = json['data'];
     id = jsonData['id'];

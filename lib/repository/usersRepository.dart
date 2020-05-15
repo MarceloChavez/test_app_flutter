@@ -4,6 +4,8 @@ import 'dart:convert';
 class UserRepository {
   final apiUrl = 'https://reqres.in/api'; // url de la API
   final apiUls = 'https://mercadito.fiuls.cl/negocios/search/'; // url de la uls
+  final imgPath = 'https://mercadito.fiuls.cl/sources/upload/commerce/';
+
 
   final Map<String, String> headers = { // headers para el POST
     "Accept": "application/json",

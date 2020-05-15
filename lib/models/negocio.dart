@@ -4,6 +4,8 @@ class Negocio {
   String direccion;
   double latitud;
   double longitud;
+  String imgUrl;
+  
 
   Negocio.fromJson(Map<String, dynamic> json){
     id  = json['id'];
@@ -11,5 +13,6 @@ class Negocio {
     direccion  = json['direccion'];
     latitud  = json['latitud'];
     longitud  = json['longitud'];
+    imgUrl = json['imagen'];
   }
 }

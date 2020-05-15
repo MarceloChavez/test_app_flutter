@@ -29,11 +29,13 @@ class _PostPageState extends State<PostPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (showResponse) responseWidget(), // una vez que presionemos el boton POST se mostrará el widget
+            if (showResponse)
+              responseWidget(), // una vez que presionemos el boton POST se mostrará el widget
             RaisedButton(
               child: Text('POST'),
               onPressed: () {
-                setState(() { // cambia el valor de showResponse para que se muestre el widget responseWidget()
+                setState(() {
+                  // cambia el valor de showResponse para que se muestre el widget responseWidget()
                   showResponse = true;
                 });
               },
@@ -45,7 +47,8 @@ class _PostPageState extends State<PostPage> {
   }
 
   Widget responseWidget() {
-    Map<String, dynamic> bodyPost = { // valores harcodeados
+    Map<String, dynamic> bodyPost = {
+      // valores harcodeados
       'distancia': '25',
       'search': 'Pescadería Puertas del Mar',
       'categoria': 'ALL',
@@ -54,31 +57,55 @@ class _PostPageState extends State<PostPage> {
       'metodo_pago': 'Dinero en Efectivo'
     };
 
-    return FutureBuilder( // widget que se mostrará cuando presiones el botón POST
+    return FutureBuilder(// widget que se mostrará cuando presiones el botón POST
       future: userRepository.getNegocios(bodyPost), // Future que retorna los negocios
-      builder: (BuildContext context, AsyncSnapshot snapshot) { // Función para construir la vista
-        if (snapshot.hasData) { // validación si viene data 
-          List<dynamic> responseBody = json.decode(snapshot.data.body); // parseamos la respuesta recibida a json
-          // en este ejemplo solo mostraremos el primer resultado responseBody[0]
-          Negocio negocio = Negocio.fromJson(responseBody[0]); // usamos el modelo creado para Negocio y creamos un nuevo objeto Negocio
-          return Container( // container que mostrará la respuesta
+      builder: (BuildContext context, AsyncSnapshot snapshot) {// Función para construir la vista
+        if (snapshot.hasData) { // validación si viene data
+          List<dynamic> responseBody = json.decode(snapshot.data.body); 
+          List<Negocio> negociosList = getNegociosList(responseBody);
+
+          return Container(
             height: 400,
             width: 400,
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Text('id: ${negocio.id}'),
-                  Text('nombre: ${negocio.nombre}'),
-                  Text('latitud: ${negocio.latitud}'),
-                  Text('longitud: ${negocio.longitud}'),
-
-                ],
-              ),
-            ), // muestra en texto la respuesta completa
+            child: negociosListWidget(negociosList),
           );
         }
         return CircularProgressIndicator();
       },
     );
   }
+
+  List<Negocio> getNegociosList(List<dynamic> json) {
+    List<Negocio> negociosList = [];
+    for (var negocio in json) {
+      negociosList.add(Negocio.fromJson(negocio));
+    }
+    return negociosList;
+  }
+
+  Widget negociosListWidget(List<Negocio> negociosList) {
+    return ListView.builder(
+      itemCount: negociosList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return negocioCard(negociosList[index]);
+      },
+    );
+  }
+
+  Widget negocioCard(Negocio negocio) {
+    UserRepository repository = new UserRepository();
+    return Card(
+      child: Column(
+        children: <Widget>[
+          Text('id: ${negocio.id}'),
+          Text('nombre: ${negocio.nombre}'),
+          Text('latitud: ${negocio.latitud}'),
+          Text('longitud: ${negocio.longitud}'),
+          Image(image: NetworkImage('https://mercadito.fiuls.cl/sources/upload/commerce/${negocio.id}/${negocio.imgUrl}'))
+        ],
+      ),
+    );
+  }
+
 }
+
